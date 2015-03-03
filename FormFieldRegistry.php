@@ -205,16 +205,19 @@ class FormFieldRegistry
         if (preg_match('/^(?P<base>[^[]+)(?P<extra>(\[.*)|$)/', $name, $m)) {
             $segments = array($m['base']);
             while (!empty($m['extra'])) {
-                if (preg_match('/^\[(?P<segment>.*?)\](?P<extra>.*)$/', $m['extra'], $m)) {
-                    $segments[] = $m['segment'];
-                } else {
-                    throw new \InvalidArgumentException(sprintf('Malformed field path "%s"', $name));
-                }
-            }
+                if (preg_match('/^\[(?P<segment>.*?)\](?P<extra>.*)$/', $m['extra'], $newM)) {
+					$segments[] = $newM['segment'];
+				} elseif (preg_match('/^\.(?P<segment>.*?)(?P<extra>(\[.*)|$)/', $m['extra'], $newM)) {
+					$segments[] = $newM['segment'];
+				} else {
+					throw new \InvalidArgumentException(sprintf('Malformed field path1 "%s"' . print_r(array($segments, $m)), $name));
+				}
+				$m = $newM;
+			}
 
             return $segments;
         }
 
-        throw new \InvalidArgumentException(sprintf('Malformed field path "%s"', $name));
+        throw new \InvalidArgumentException(sprintf('Malformed field path2 "%s"', $name));
     }
 }
